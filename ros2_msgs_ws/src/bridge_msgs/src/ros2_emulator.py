@@ -4,6 +4,7 @@
 
 import sys
 import time
+import random
 
 import rclpy
 
@@ -22,8 +23,7 @@ def main():
         counter += 1
         now = time.time()
         if (counter % 50) == 0:
-            joint_cmd_msg.header.stamp.sec = int(now)
-            joint_cmd_msg.header.stamp.nanosec = int(now * 1e9) % 1000000000
+            joint_cmd_msg.position = random.random()
             joint_cmd_pub.publish(joint_cmd_msg)
             counter = 0
             print ('Published joint_command')
