@@ -16,14 +16,7 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(bridge_msgs
-   msg/CANFrame.msg
-   msg/CurbGo.msg
    msg/JointCommand.msg
-   msg/MotorStatus.msg
-   #srv/GoToGoalPose.srv
-   #srv/TravelSetDistance.srv
-   #srv/TravelSetTime.srv
-   #srv/AlignRobot.srv
   DEPENDENCIES
    geometry_msgs
    std_msgs
@@ -32,7 +25,3 @@ rosidl_generate_interfaces(bridge_msgs
 ament_export_dependencies(rosidl_default_runtime)
 
 ament_package()
-
-#install(
-#  FILES ros1_bridge_mappings.yaml
-#  DESTINATION share/${PROJECT_NAME})
