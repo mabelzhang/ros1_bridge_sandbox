@@ -13,7 +13,7 @@ from bridge_msgs.msg import JointCommand
 def main():
     rclpy.init(args=sys.argv)
 
-    node = rclpy.create_node('ros2_emulator')
+    node = rclpy.create_node('ros2_pub')
 
     joint_cmd_pub = node.create_publisher(JointCommand, 'joint_command')
 
