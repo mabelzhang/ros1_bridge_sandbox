@@ -6,14 +6,14 @@ import random
 
 import rospy
 
-from bridge_msgs.msg import JointCommand
+from std_msgs.msg import Float32
 
 def main():
-    rospy.init_node('ros1_pub', anonymous=True)
+    rospy.init_node('ros1_pub_builtin', anonymous=True)
 
-    jc_pub = rospy.Publisher('joint_command', JointCommand, queue_size=5)
+    fp_pub = rospy.Publisher('floating_point', Float32, queue_size=5)
 
-    jc_msg = JointCommand()
+    fp_msg = Float32()
 
     rate = rospy.Rate(10)
 
@@ -22,9 +22,9 @@ def main():
         counter += 1
         now = time.time()
 
-        jc_msg.position = random.random()
-        jc_pub.publish(jc_msg)
-        print ('published joint_command %f' % jc_msg.position)
+        fp_msg.data = random.random()
+        fp_pub.publish(fp_msg)
+        print ('published floating_point %f' % fp_msg.data)
 
         rate.sleep()
 
