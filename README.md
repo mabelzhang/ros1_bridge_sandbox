@@ -6,6 +6,8 @@ This package has been tested in Ubuntu 18.04 with
 * ROS 1 Melodic
 * ROS 2 Dashing
 
+A Dockerfile with the prerequisites is provided.
+
 
 ### Demo basic bridge usage
 
@@ -63,41 +65,53 @@ ros2 run bridge_msgs ros2_sub.py
 
 ### Demo bridge in robot simulation
 
-Clone the [VRX simulation repository](https://bitbucket.org/osrf/vrx) to a desired location:
+To demonstrate the bridge's functionality on a robot, sample scripts have been written to work with the [VRX simulation environment](https://bitbucket.org/osrf/vrx), which features a maritime surface vehicle.
+
+A similar setup should work with any other robot.
+
+To try it out on the VRX robot, you will need to install the VRX environment.
+Follow the [installation tutorials](https://bitbucket.org/osrf/vrx/wiki/tutorials).
+The simplest installation method is the [Debian install](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupInstall):
+```
+sudo apt install ros-melodic-vrx-gazebo
+```
+
+Alternatively, you can [install from source](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupInstall).
+Clone the VRX simulation repository to a desired location, compile and source the packages:
 ```
 mkdir -p vrx_ws/src
 cd vrx_ws/src
 hg clone https://bitbucket.org/osrf/vrx
-```
-
-Compile and source the packages:
-```
 . /opt/ros/melodic/setup.bash
-cd vrx_ws
+cd ..
 catkin build
 . devel/setup.bash
 ```
 
-Launch VRX simulation in ROS 1:
+A third alternative is to [install the VRX Docker image](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupDocker). Docker X-server support is required to run Gazebo in Docker. If you choose this option, you may want to [install NVIDIA Docker](https://bitbucket.org/osrf/vrx/wiki/tutorials/installNvidiaDocker) to speed up rendering.
+
+Once the VRX environment is installed, run the following commands in several new terminals.
+
+Shell 1, launch VRX simulation in ROS 1:
 ```
 roslaunch vrx_gazebo vrx.launch
 ```
 
-Run the bridge:
+Shell 2, run RViz 2 in ROS 2:
+```
+. /opt/ros/dashing/setup.bash
+ros2 run rviz2 rviz2
+```
+Add Image topics and LIDAR topic to RViz, or use the sample ``vrx_config.rviz`` RViz configuration file.
+
+Shell 3, run the bridge:
 ```
 . /opt/ros/melodic/setup.bash
 . /opt/ros/dashing/setup.bash
 ros2 run ros1_bridge dynamic_bridge --bridge-all-topics
 ```
 
-Open a new terminal, source ROS 2, run RViz 2:
-```
-. /opt/ros/dashing/setup.bash
-ros2 run rviz2 rviz2
-```
-Add Image topics and LIDAR topic to RViz. They should be readily displayed.
-
-Run ROS 2 node to subscribe to built-in data types in ROS 1:
+Shell 4, run ROS 2 node to subscribe to built-in data types in ROS 1:
 TODO: Test this
 ```
 ros2 run bridge_msgs demo_vrx_read.py
@@ -108,5 +122,4 @@ TODO: Test this
 ```
 ros2 run bridge_msgs demo_vrx_write.py
 ```
-
 
