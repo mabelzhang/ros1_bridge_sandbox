@@ -95,6 +95,43 @@ RUN apt-get update \
   && apt-get install -y ros-melodic-vrx-gazebo
 
 
+#####
+# Install colcon
+RUN apt-get update \
+  && apt-get install -y python3-colcon-common-extensions ros-dashing-launch-testing-ament-cmake 
+
+
+#####
+# Compile custom messages and ros1_bridge
+# Keep each workspace in separate layer, so ROS 1 and 2 workspaces don't mix
+
+# Clone repo
+RUN mkdir -p /home/$USERNAME && cd /home/$USERNAME \
+  && git clone https://github.com/mabelzhang/ros1_bridge_sandbox.git
+# ROS 1 messages workspace
+RUN cd /home/$USERNAME/ros1_bridge_sandbox/ros1_msgs_ws \
+  && /bin/bash -c "source /opt/ros/melodic/setup.bash; \
+      catkin_make_isolated --install"
+# ROS 2 messages workspace
+RUN cd /home/$USERNAME/ros1_bridge_sandbox/ros2_msgs_ws \
+  && /bin/bash -c "source /opt/ros/dashing/setup.bash; \
+      colcon build --packages-select bridge_msgs"
+
+# Bridge workspace
+RUN mkdir -p /home/$USERNAME/ros1_bridge_sandbox/bridge_ws/src \
+ && cd /home/$USERNAME/ros1_bridge_sandbox/bridge_ws/src \
+ && git clone https://github.com/ros2/ros1_bridge.git \
+ && cd .. \
+ && /bin/bash -c "source /opt/ros/melodic/setup.bash; \
+      source /opt/ros/dashing/setup.bash; \
+      source /home/$USERNAME/ros1_bridge_sandbox/ros1_msgs_ws/install_isolated/setup.bash; \
+      source /home/$USERNAME/ros1_bridge_sandbox/ros2_msgs_ws/install/local_setup.bash; \
+      colcon build --packages-select ros1_bridge --cmake-force-configure; \
+      source /home/$USERNAME/ros1_bridge_sandbox/bridge_ws/install/local_setup.bash; \
+      ros2 run ros1_bridge dynamic_bridge --print-pairs; \
+      ros2 run ros1_bridge dynamic_bridge --print-pairs | grep bridge"
+
+
 # When running a container start in the developer's home folder
 WORKDIR /home/$USERNAME
 USER $USERNAME
