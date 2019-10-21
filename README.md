@@ -1,6 +1,6 @@
-Stripped down packages to demonstrate the usage of [`ros1_bridge`](https://github.com/ros2/ros1_bridge), a communication channel between ROS 1 and ROS 2.
+Minimal packages to demonstrate the usage of [`ros1_bridge`](https://github.com/ros2/ros1_bridge), a communication channel between ROS 1 and ROS 2. The bridge allows packages in ROS 1 and ROS 2 to run simultaneously, so that ROS 1 packages can be incrementally migrate to ROS 2.
 
-### Prerequisites
+## Prerequisites
 
 This package has been tested in Ubuntu 18.04 with
 * ROS 1 Melodic
@@ -9,7 +9,9 @@ This package has been tested in Ubuntu 18.04 with
 A Dockerfile with the prerequisites is provided.
 
 
-### Demo basic bridge usage
+## Basic bridge usage
+
+This example demonstrates basic communication between publisher and subscriber across ROS 1 and ROS 2.
 
 Shell 1, compile ROS 1 custom message:
 ```
@@ -63,32 +65,36 @@ ros2 run bridge_msgs ros2_sub.py
 ```
 
 
-### Demo bridge in robot simulation
+## Bridge in a robot simulation
 
-To demonstrate the bridge's functionality on a robot, sample scripts have been written to work with the [VRX simulation environment](https://bitbucket.org/osrf/vrx), which features a maritime surface vehicle.
+This example demonstrates communication for a more complex system, a simulated robot. Sample scripts have been written to work with the [VRX simulation environment](https://bitbucket.org/osrf/vrx), which features a maritime surface vehicle. A similar setup should work with any other robot.
 
-A similar setup should work with any other robot.
+### Install VRX simulation world
 
 To try it out on the VRX robot, you will need to install the VRX environment.
 Follow the [installation tutorials](https://bitbucket.org/osrf/vrx/wiki/tutorials).
-The simplest installation method is the [Debian install](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupInstall):
-```
-sudo apt install ros-melodic-vrx-gazebo
-```
+There are several ways to install.
 
-Alternatively, you can [install from source](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupInstall).
+* The simplest installation method is the [Debian install](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupInstall):
+   ```
+   sudo apt install ros-melodic-vrx-gazebo
+   ```
+
+* Alternatively, you can [install from source](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupInstall).
 Clone the VRX simulation repository to a desired location, compile and source the packages:
-```
-mkdir -p vrx_ws/src
-cd vrx_ws/src
-hg clone https://bitbucket.org/osrf/vrx
-. /opt/ros/melodic/setup.bash
-cd ..
-catkin build
-. devel/setup.bash
-```
+   ```
+   mkdir -p vrx_ws/src
+   cd vrx_ws/src
+   hg clone https://bitbucket.org/osrf/vrx
+   . /opt/ros/melodic/setup.bash
+   cd ..
+   catkin build
+   . devel/setup.bash
+   ```
 
-A third alternative is to [install the VRX Docker image](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupDocker). Docker X-server support is required to run Gazebo in Docker. If you choose this option, you may want to [install NVIDIA Docker](https://bitbucket.org/osrf/vrx/wiki/tutorials/installNvidiaDocker) to speed up rendering.
+* A third alternative is to [install the VRX Docker image](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupDocker). Docker X-server support is required to run Gazebo in Docker. If you choose this option, you may want to [install NVIDIA Docker](https://bitbucket.org/osrf/vrx/wiki/tutorials/installNvidiaDocker) to speed up rendering.
+
+### Demonstration
 
 Once the VRX environment is installed, run the following commands in several new terminals.
 
