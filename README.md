@@ -1,6 +1,6 @@
 Minimal packages to demonstrate the usage of [`ros1_bridge`](https://github.com/ros2/ros1_bridge), a communication channel between ROS 1 and ROS 2. The bridge allows packages in ROS 1 and ROS 2 to run simultaneously, so that ROS 1 packages can be incrementally migrate to ROS 2.
 
-## Prerequisites
+# Prerequisites
 
 This package has been tested in Ubuntu 18.04 with
 * ROS 1 Melodic
@@ -9,7 +9,7 @@ This package has been tested in Ubuntu 18.04 with
 A Dockerfile with the prerequisites is provided.
 
 
-## Basic bridge usage
+# Basic bridge usage
 
 This example demonstrates basic communication between publisher and subscriber across ROS 1 and ROS 2.
 
@@ -65,17 +65,17 @@ ros2 run bridge_msgs ros2_sub.py
 ```
 
 
-## Bridge in a robot simulation
+# Bridge in a robot simulation
 
 This example demonstrates communication for a more complex system, a simulated robot. Sample scripts have been written to work with the [VRX simulation environment](https://bitbucket.org/osrf/vrx), which features a maritime surface vehicle. A similar setup should work with any other robot.
 
-### Install VRX simulation world
+## Install VRX simulation world
 
 To try it out on the VRX robot, you will need to install the VRX environment.
 Follow the [installation tutorials](https://bitbucket.org/osrf/vrx/wiki/tutorials).
-There are several ways to install.
+Several installation methods are available.
 
-* The simplest installation method is the [Debian install](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupInstall):
+* [Debian install](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupInstall) is the simplest way:
    ```
    sudo apt install ros-melodic-vrx-gazebo
    ```
@@ -94,7 +94,7 @@ Clone the VRX simulation repository to a desired location, compile and source th
 
 * A third alternative is to [install the VRX Docker image](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupDocker). Docker X-server support is required to run Gazebo in Docker. If you choose this option, you may want to [install NVIDIA Docker](https://bitbucket.org/osrf/vrx/wiki/tutorials/installNvidiaDocker) to speed up rendering.
 
-### Demonstration
+## Demonstration
 
 Once the VRX environment is installed, run the following commands in several new terminals.
 
