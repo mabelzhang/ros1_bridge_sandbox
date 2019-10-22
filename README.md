@@ -9,7 +9,7 @@ This package has been tested in Ubuntu 18.04 with
 A Dockerfile with the prerequisites is provided.
 
 
-# Basic bridge usage
+# Bridge a custom message type
 
 This example demonstrates basic communication between publisher and subscriber across ROS 1 and ROS 2.
 
@@ -36,6 +36,14 @@ colcon build --packages-select bridge_msgs
 python3 src/bridge_msgs/src/ros2_pub.py
 ```
 
+The publisher will produce output like this:
+```
+Published joint_command
+Published joint_command
+Published joint_command
+Published joint_command
+```
+
 Shell 3, check out and compile `ros1_bridge` from source to recognize the custom message we just compiled above:
 ```
 mkdir -p ros1_bridge_sandbox/bridge_ws/src
@@ -49,10 +57,9 @@ cd ..
 . ~/ros1_bridge_sandbox/ros2_msgs_ws/install/local_setup.bash 
 # Compile ros1_bridge and source it
 colcon build --packages-select ros1_bridge --cmake-force-configure
-. install/setup.bash
+. install/local_setup.bash
 # This should print:   - 'bridge_msgs/JointCommand' (ROS 2) <=> 'bridge_msgs/JointCommand' (ROS 1)
 ros2 run ros1_bridge dynamic_bridge --print-pairs | grep bridge
-  - 'bridge_msgs/msg/JointCommand' (ROS 2) <=> 'bridge_msgs/JointCommand' (ROS 1)
 ```
 
 If the `grep` does not print anything, verify that the ROS 1 and ROS 2 messages are both recognized in this shell:
@@ -73,25 +80,39 @@ Run the bridge, which will carry messages across ROS 1 and 2:
 ros2 run ros1_bridge dynamic_bridge
 ```
 
-Shell 1, test subscribing to ROS 2 messages in ROS 1:
+Shell 1, test subscribing to ROS 2 messages in ROS 1.
+You should see printouts on the screen:
 ```
-rosrun bridge_msgs ros1_sub.py
+$ rosrun bridge_msgs ros1_sub.py
+[INFO] [1571738769.812788]: 0.703536987438
+[INFO] [1571738769.866240]: 0.620796272812
+[INFO] [1571738769.919718]: 0.615485199642
+[INFO] [1571738769.972993]: 0.556240315522
 ```
-You should see printouts on the screen.
 
 If the executable is not found, make sure you have sourced the package:
 ```
 . devel_isolated/setup.bash 
 ```
 
-In the other direction, test subscribing to ROS 1 messages in ROS 2:
+Keeping the bridge running in Shell 3, try the other direction, subscribing to
+ROS 1 messages in ROS 2.
+
 Shell 1:
 ```
-rosrun bridge_msgs ros1_pub.py
+$ rosrun bridge_msgs ros1_pub.py
+published joint_command 0.337332
+published joint_command 0.004804
+published joint_command 0.022121
+published joint_command 0.100489
 ```
 Shell 2:
 ```
-ros2 run bridge_msgs ros2_sub.py
+$ python3 src/bridge_msgs/src/ros2_sub.py
+received joint_command 0.337332
+received joint_command 0.004804
+received joint_command 0.022121
+received joint_command 0.100489
 ```
 
 

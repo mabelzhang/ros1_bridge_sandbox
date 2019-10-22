@@ -96,5 +96,6 @@ docker run -it \
   --rm \
   --runtime=nvidia \
   --security-opt seccomp=unconfined \
+  --network host \
   $DOCKER_OPTS \
   $IMG

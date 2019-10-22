@@ -16,11 +16,14 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(bridge_msgs
-   msg/JointCommand.msg
+    msg/JointCommand.msg
   DEPENDENCIES
-   geometry_msgs
-   std_msgs
+    geometry_msgs
+    std_msgs
 )
+
+install(DIRECTORY src
+  DESTINATION lib/${PROJECT_NAME})
 
 ament_export_dependencies(rosidl_default_runtime)
 
