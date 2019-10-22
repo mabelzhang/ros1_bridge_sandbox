@@ -25,6 +25,59 @@ This package has been tested in Ubuntu 18.04 with
 A Dockerfile with the prerequisites is provided.
 
 
+# Bridge basic usage
+
+Shell 1, compile the ROS 1 package and run a publisher of a built-in message type:
+
+```
+. /opt/ros/melodic/setup.bash
+cd ros1_bridge_sandbox/ros1_msgs_ws
+catkin_make_isolated --install
+. devel_isolated/setup.bash
+roscore &
+rosrun bridge_msgs ros1_pub_builtin.py
+```
+
+Shell 2, compile the ROS 2 package and run a subscriber to the built-in message:
+```
+. /opt/ros/dashing/setup.bash
+cd ros1_bridge_sandbox/ros2_msgs_ws
+colcon build --packages-select bridge_msgs
+. install/local_setup.bash
+python3 src/bridge_msgs/src/ros2_sub_builtin.py
+```
+
+Note that simply echoing the message without an existing subscriber would not
+work.
+The bridge requires a subscriber to exist in order to bridge topics.
+
+Shell 3, run the bridge.
+For built-in message, you can simply run the bridge as is, such as from the
+Debian package.
+It does not need to be recompiled.
+```
+. /opt/ros/melodic/setup.bash
+. /opt/ros/dashing/setup.bash
+ros2 run ros1_bridge dynamic_bridge
+```
+
+Sample output from Shell 1:
+```
+published floating_point 0.748500
+published floating_point 0.225652
+published floating_point 0.091966
+published floating_point 0.147991
+```
+
+Sample output from Shell 2:
+```
+received floating_point 0.748500
+received floating_point 0.225652
+received floating_point 0.091966
+received floating_point 0.147991
+```
+
+
 # Bridge a custom message type
 
 This example demonstrates how to bridge communication between publisher and subscriber across ROS 1 and ROS 2, for a custom message type.
