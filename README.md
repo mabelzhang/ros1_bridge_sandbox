@@ -11,12 +11,17 @@ A Dockerfile with the prerequisites is provided.
 
 # Bridge a custom message type
 
-This example demonstrates basic communication between publisher and subscriber across ROS 1 and ROS 2.
+This example demonstrates how to bridge communication between publisher and subscriber across ROS 1 and ROS 2, for a custom message type.
 
 Run the Docker container.
 If you do not have Docker installed, you can still follow the instructions below after cloning this repository manually.
 
 ## Set up shells and compile packages
+
+We are going to compile two identical message types, one in a ROS 1 workspace,
+the other in a ROS 2 workspace.
+We will recompile the bridge afterwards, so that it recognizes these new custom
+messages.
 
 Shell 1, compile ROS 1 custom message and run ROS 1 core:
 ```
@@ -64,7 +69,7 @@ float64 position
 
 and that you sourced the newly compiled bridge:
 ```
-$ . ~/ros1_bridge_sandbox/bridge_ws/install/setup.bash
+. ~/ros1_bridge_sandbox/bridge_ws/install/setup.bash
 ```
 
 In Shell 3, run the bridge, which will carry messages across ROS 1 and 2:
