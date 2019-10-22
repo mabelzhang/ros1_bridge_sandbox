@@ -2,7 +2,8 @@
 # ROS 2 Dashing from Debian +
 # Virtual RobotX (VRX) simulation https://bitbucket.org/osrf/vrx/src/default/
 
-FROM ubuntu:bionic
+#FROM ubuntu:bionic
+FROM nvidia/opengl:1.0-glvnd-devel-ubuntu18.04
 
 #####
 # ROS 2 Dashing from Debian
@@ -104,6 +105,8 @@ RUN apt-get update \
 #####
 # Compile custom messages and ros1_bridge
 # Keep each workspace in separate layer, so ROS 1 and 2 workspaces don't mix
+
+USER $USERNAME
 
 # Clone repo
 RUN mkdir -p /home/$USERNAME && cd /home/$USERNAME \
