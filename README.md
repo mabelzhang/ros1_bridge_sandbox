@@ -1,4 +1,20 @@
-Minimal packages to demonstrate the usage of [`ros1_bridge`](https://github.com/ros2/ros1_bridge), a communication channel between ROS 1 and ROS 2. The bridge allows packages in ROS 1 and ROS 2 to run simultaneously, so that ROS 1 packages can be incrementally migrate to ROS 2.
+Minimal packages to demonstrate the usage of
+[`ros1_bridge`](https://github.com/ros2/ros1_bridge), a communication channel
+between ROS 1 and ROS 2.
+The bridge allows packages in ROS 1 and ROS 2 to run simultaneously, so that
+ROS 1 packages can be incrementally migrate to ROS 2.
+
+Built-in message and service types are automatically bridged, with no
+additional work required.
+See [`ros1_bridge`](https://github.com/ros2/ros1_bridge) for more details of
+basic usage.
+Essentially, all that is required is to run the bridge.
+
+Custom message and service types require recompilation of the bridge. A few
+extra steps are required for the setup.
+Here, a minimal example is used to demonstrate how to get the bridge working
+with a custom message type.
+
 
 # Prerequisites
 
