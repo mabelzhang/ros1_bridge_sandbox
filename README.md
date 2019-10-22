@@ -27,24 +27,24 @@ A Dockerfile with the prerequisites is provided.
 
 # Bridge basic usage
 
-Shell 1, compile the ROS 1 package and run a publisher of a built-in message type:
+This example demonstrates how to bridge communication between publisher and
+subscriber across ROS 1 and ROS 2, for a built-in message type
+(`std_msgs/Float32`).
+For built-in types, one has simply to run a publisher, a subscriber, and the
+bridge.
+
+Shell 1, run a ROS 1 publisher of a built-in message type:
 
 ```
 . /opt/ros/melodic/setup.bash
-cd ros1_bridge_sandbox/ros1_msgs_ws
-catkin_make_isolated --install
-. devel_isolated/setup.bash
 roscore &
-rosrun bridge_msgs ros1_pub_builtin.py
+python ros1_bridge_sandbox/ros1_msgs_ws/src/bridge_msgs/src/bridge_msgs/ros1_pub_iltin.py
 ```
 
-Shell 2, compile the ROS 2 package and run a subscriber to the built-in message:
+Shell 2, run a ROS 2 subscriber to the same message:
 ```
 . /opt/ros/dashing/setup.bash
-cd ros1_bridge_sandbox/ros2_msgs_ws
-colcon build --packages-select bridge_msgs
-. install/local_setup.bash
-python3 src/bridge_msgs/src/ros2_sub_builtin.py
+python3 ros1_bridge_sandbox/ros2_msgs_ws/src/bridge_msgs/src/ros2_sub_builtin.py
 ```
 
 Note that simply echoing the message without an existing subscriber would not
