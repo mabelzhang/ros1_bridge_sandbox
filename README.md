@@ -16,6 +16,8 @@ This example demonstrates basic communication between publisher and subscriber a
 Run the Docker container.
 If you do not have Docker installed, you can still follow the instructions below after cloning this repository manually.
 
+## Set up shells and compile packages
+
 Shell 1, compile ROS 1 custom message and run ROS 1 core:
 ```
 . /opt/ros/melodic/setup.bash
@@ -32,19 +34,9 @@ Shell 2, compile ROS 2 custom message and run a publisher:
 cd ros1_bridge_sandbox/ros2_msgs_ws
 colcon build --packages-select bridge_msgs
 . install/local_setup.bash
-# Publishes bridge_msgs/JointCommand type to /joint_command topic
-python3 src/bridge_msgs/src/ros2_pub.py
 ```
 
-The publisher will produce output like this:
-```
-Published joint_command
-Published joint_command
-Published joint_command
-Published joint_command
-```
-
-Shell 3, check out and compile `ros1_bridge` from source to recognize the custom message we just compiled above:
+Shell 3, clone and compile `ros1_bridge` from source to recognize the custom message we just compiled above:
 ```
 mkdir -p ros1_bridge_sandbox/bridge_ws/src
 cd ros1_bridge_sandbox/bridge_ws/src
@@ -75,13 +67,28 @@ and that you sourced the newly compiled bridge:
 $ . ~/ros1_bridge_sandbox/bridge_ws/install/setup.bash
 ```
 
-Run the bridge, which will carry messages across ROS 1 and 2:
+In Shell 3, run the bridge, which will carry messages across ROS 1 and 2:
 ```
 ros2 run ros1_bridge dynamic_bridge
 ```
 
-Shell 1, test subscribing to ROS 2 messages in ROS 1.
-You should see printouts on the screen:
+## Run the example: ROS 2 publisher and ROS 1 subscriber
+
+Keeping the same shell ordering as the setup above, and the bridge running
+in Shell 3, the following example show publishers and subscribers on both sides
+of the bridge.
+
+Shell 2, publish in ROS 2 to ROS 1.
+This publishes `bridge_msgs/JointCommand` type to `/joint_command` topic:
+```
+$ python3 src/bridge_msgs/src/ros2_pub.py
+Published joint_command
+Published joint_command
+Published joint_command
+Published joint_command
+```
+
+Shell 1, subscribe to ROS 2 messages in ROS 1:
 ```
 $ rosrun bridge_msgs ros1_sub.py
 [INFO] [1571738769.812788]: 0.703536987438
@@ -95,6 +102,8 @@ If the executable is not found, make sure you have sourced the package:
 . devel_isolated/setup.bash 
 ```
 
+## Run the example: ROS 1 publisher and ROS 2 subscriber
+
 Keeping the bridge running in Shell 3, try the other direction, subscribing to
 ROS 1 messages in ROS 2.
 
@@ -106,6 +115,7 @@ published joint_command 0.004804
 published joint_command 0.022121
 published joint_command 0.100489
 ```
+
 Shell 2:
 ```
 $ python3 src/bridge_msgs/src/ros2_sub.py
