@@ -25,11 +25,12 @@ This package has been tested in Ubuntu 18.04 with
 A Dockerfile with the prerequisites is provided.
 
 
-# Bridge basic usage
+# Basic usage: bridge built-in message types
 
 This example demonstrates how to bridge communication between publisher and
 subscriber across ROS 1 and ROS 2, for a built-in message type
 (`std_msgs/Float32`).
+
 For built-in types, one has simply to run a publisher, a subscriber, and the
 bridge.
 
@@ -81,9 +82,6 @@ received floating_point 0.147991
 # Bridge a custom message type
 
 This example demonstrates how to bridge communication between publisher and subscriber across ROS 1 and ROS 2, for a custom message type.
-
-Run the Docker container.
-If you do not have Docker installed, you can still follow the instructions below after cloning this repository manually.
 
 ## Set up shells and compile packages
 
@@ -235,6 +233,7 @@ Once the VRX environment is installed, run the following commands in several new
 
 Shell 1, launch VRX simulation in ROS 1:
 ```
+. /opt/ros/melodic/setup.bash
 roslaunch vrx_gazebo vrx.launch
 ```
 
@@ -243,7 +242,6 @@ Shell 2, run RViz 2 in ROS 2:
 . /opt/ros/dashing/setup.bash
 ros2 run rviz2 rviz2
 ```
-Add Image topics and LIDAR topic to RViz, or use the sample ``vrx_config.rviz`` RViz configuration file.
 
 Shell 3, run the bridge:
 ```
@@ -251,6 +249,7 @@ Shell 3, run the bridge:
 . /opt/ros/dashing/setup.bash
 ros2 run ros1_bridge dynamic_bridge --bridge-all-topics
 ```
+In RViz, add Image topics and LIDAR topic, or use the sample ``vrx_config.rviz`` RViz configuration file.
 
 Shell 4, run ROS 2 node to subscribe to built-in data types in ROS 1:
 TODO: Test this
