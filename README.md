@@ -274,6 +274,8 @@ and `/wamv/sensors/cameras/middle_right_camera/image_raw`.
 
 The three images and point cloud visualization should show up in RViz 2.
 
+![ROS 2 RViz 2 displaying sensor data bridged from VRX in ROS 1](imgs/vrx_rviz_sensors.png)
+
 ## Bridge built-in robot commands from ROS 2 to ROS 1
 
 This section shows how to send commands from a ROS 2 node to a robot running in ROS 1.
