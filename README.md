@@ -10,8 +10,8 @@ See [`ros1_bridge`](https://github.com/ros2/ros1_bridge) for more details of
 basic usage.
 Essentially, all that is required is to run the bridge.
 
-Custom message and service types require recompilation of the bridge. A few
-extra steps are required for the setup.
+Custom message and service types require recompilation of the bridge.
+A few extra steps are required for the setup.
 Here, a minimal example is used to demonstrate how to get the bridge working
 with a custom message type.
 
@@ -25,7 +25,7 @@ This package has been tested in Ubuntu 18.04 with
 A Dockerfile with the prerequisites is provided.
 
 
-# Basic usage: bridge built-in message types
+# Basic usage: bridge built-in data types
 
 This example demonstrates how to bridge communication between publisher and
 subscriber across ROS 1 and ROS 2, for a built-in message type
@@ -79,7 +79,7 @@ received floating_point 0.147991
 ```
 
 
-# Bridge a custom message type
+# Bridge a custom data type
 
 This example demonstrates how to bridge communication between publisher and subscriber across ROS 1 and ROS 2, for a custom message type.
 
@@ -198,9 +198,17 @@ received joint_command 0.100489
 ```
 
 
-# Bridge in a robot simulation
+# Bridge a ROS 1 robot simulation to ROS 2
 
-This example demonstrates communication for a more complex system, a simulated robot. Sample scripts have been written to work with the [VRX simulation environment](https://bitbucket.org/osrf/vrx), which features a maritime surface vehicle. A similar setup should work with any other robot.
+This example demonstrates communication for a more complex system, a simulated
+robot in ROS 1, which will be bridged to talk to RViz2 and code in ROS 2.
+Since many existing robots run on ROS 1, this shows a starting point of making
+those robots talk to ROS 2.
+
+Sample scripts have been written to work with the 
+[VRX simulation environment](https://bitbucket.org/osrf/vrx), which features a
+maritime surface vehicle in ROS 1.
+A similar setup should work with any other robot.
 
 ## Install VRX simulation world
 
@@ -225,9 +233,15 @@ Clone the VRX simulation repository to a desired location, compile and source th
    . devel/setup.bash
    ```
 
-* A third alternative is to [install the VRX Docker image](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupDocker). Docker X-server support is required to run Gazebo in Docker. If you choose this option, you may want to [install NVIDIA Docker](https://bitbucket.org/osrf/vrx/wiki/tutorials/installNvidiaDocker) to speed up rendering.
+* A third alternative is to [install the VRX Docker image](https://bitbucket.org/osrf/vrx/wiki/tutorials/SystemSetupDocker).
+Docker X-server support is required to run Gazebo in Docker.
+If you choose this option, you may want to [install NVIDIA Docker](https://bitbucket.org/osrf/vrx/wiki/tutorials/installNvidiaDocker) to speed up rendering.
 
-## Demonstration
+## Bridge built-in sensor messages to ROS 2 RViz 2
+
+This section shows how to visualize ROS 1 built-in sensor messages in ROS 2
+RViz 2, using the bridge.
+This allows us to read data from ROS 1 in ROS 2.
 
 Once the VRX environment is installed, run the following commands in several new terminals.
 
@@ -236,28 +250,40 @@ Shell 1, launch VRX simulation in ROS 1:
 . /opt/ros/melodic/setup.bash
 roslaunch vrx_gazebo vrx.launch
 ```
-
-Shell 2, run RViz 2 in ROS 2:
-```
-. /opt/ros/dashing/setup.bash
-ros2 run rviz2 rviz2
-```
-
-Shell 3, run the bridge:
+Shell 2, run the bridge:
 ```
 . /opt/ros/melodic/setup.bash
 . /opt/ros/dashing/setup.bash
 ros2 run ros1_bridge dynamic_bridge --bridge-all-topics
 ```
-In RViz, add Image topics and LIDAR topic, or use the sample ``vrx_config.rviz`` RViz configuration file.
+Note that `--bridge-all-topics` must be specified.
 
-Shell 4, run ROS 2 node to subscribe to built-in data types in ROS 1:
+Shell 3, run RViz 2 in ROS 2:
+```
+. /opt/ros/dashing/setup.bash
+ros2 run rviz2 rviz2
+```
+
+In RViz, load (File menu, Open Config) the provided `.rviz` configuration file.
+Alternatively, manually add PointCloud2 topic `/lidar_wamv/points`,
+Image topics `/front_left_camera/image_raw`, `/front_right_camera/image_raw`,
+and `/middle_right_camera/image_raw`.
+
+The three images and point cloud visualization should show up in RViz 2.
+
+## Bridge built-in robot commands from ROS 2 to ROS 1
+
+This section shows how to send commands from a ROS 2 node to a robot running in ROS 1.
+This allows us to write new algorithms in ROS 2 and execute the commands to control a ROS 1 robot.
+
+Shell 4, run a ROS 2 node to subscribe to built-in data types in ROS 1:
 TODO: Test this
 ```
+. /opt/ros/dashing/setup.bash
 ros2 run bridge_msgs demo_vrx_read.py
 ```
 
-Run ROS 2 node to publish to built-in data types in ROS 1:
+Run a ROS 2 node to publish to built-in data types in ROS 1:
 TODO: Test this
 ```
 ros2 run bridge_msgs demo_vrx_write.py
