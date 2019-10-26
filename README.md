@@ -265,9 +265,12 @@ ros2 run rviz2 rviz2
 ```
 
 In RViz, load (File menu, Open Config) the provided `.rviz` configuration file.
-Alternatively, manually add PointCloud2 topic `/lidar_wamv/points`,
-Image topics `/front_left_camera/image_raw`, `/front_right_camera/image_raw`,
-and `/middle_right_camera/image_raw`.
+Alternatively, manually set Fixed Frame under Global Options to
+`wamv/lidar_wamv_link`, and add PointCloud2 topic
+`/wamv/sensors/cameras/lidar_wamv/points`,
+Image topics `/wamv/sensors/cameras/front_left_camera/image_raw`,
+`/wamv/sensors/cameras/front_right_camera/image_raw`,
+and `/wamv/sensors/cameras/middle_right_camera/image_raw`.
 
 The three images and point cloud visualization should show up in RViz 2.
 
