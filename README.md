@@ -237,7 +237,7 @@ Clone the VRX simulation repository to a desired location, compile and source th
 Docker X-server support is required to run Gazebo in Docker.
 If you choose this option, you may want to [install NVIDIA Docker](https://bitbucket.org/osrf/vrx/wiki/tutorials/installNvidiaDocker) to speed up rendering.
 
-## Bridge built-in sensor messages to ROS 2 RViz 2
+## Bridge built-in sensor messages from ROS 1 to ROS 2 RViz 2
 
 This section shows how to visualize ROS 1 built-in sensor messages in ROS 2
 RViz 2, using the bridge.
