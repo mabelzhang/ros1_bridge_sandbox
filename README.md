@@ -250,6 +250,7 @@ Shell 1, launch VRX simulation in ROS 1:
 . /opt/ros/melodic/setup.bash
 roslaunch vrx_gazebo vrx.launch
 ```
+
 Shell 2, run the bridge:
 ```
 . /opt/ros/melodic/setup.bash
@@ -257,6 +258,37 @@ Shell 2, run the bridge:
 ros2 run ros1_bridge dynamic_bridge --bridge-all-topics
 ```
 Note that `--bridge-all-topics` must be specified.
+
+The bridge should output information about various topics are bridged both ways, such as the following sample output for ROS 1 to 2:
+```
+created 1to2 bridge for topic '/clock' with ROS 1 type 'rosgraph_msgs/Clock' and ROS 2 type 'rosgraph_msgs/msg/Clock'
+created 1to2 bridge for topic '/rosout' with ROS 1 type 'rosgraph_msgs/Log' and ROS 2 type 'rcl_interfaces/msg/Log'
+created 1to2 bridge for topic '/rosout_agg' with ROS 1 type 'rosgraph_msgs/Log' and ROS 2 type 'rcl_interfaces/msg/Log'
+created 1to2 bridge for topic '/vrx/debug/wind/direction' with ROS 1 type 'std_msgs/Float64' and ROS 2 type 'std_msgs/msg/Float64'
+created 1to2 bridge for topic '/vrx/debug/wind/speed' with ROS 1 type 'std_msgs/Float64' and ROS 2 type 'std_msgs/msg/Float64'
+created 1to2 bridge for topic '/wamv/joint_states' with ROS 1 type 'sensor_msgs/JointState' and ROS 2 type 'sensor_msgs/msg/JointState'
+created 1to2 bridge for topic '/wamv/sensors/cameras/front_left_camera/camera_info' with ROS 1 type 'sensor_msgs/CameraInfo' and ROS 2 type 'sensor_msgs/msg/CameraInfo'
+created 1to2 bridge for topic '/wamv/sensors/cameras/front_left_camera/image_raw' with ROS 1 type 'sensor_msgs/Image' and ROS 2 type 'sensor_msgs/msg/Image'
+created 1to2 bridge for topic '/wamv/sensors/cameras/front_left_camera/image_raw/compressed' with ROS 1 type 'sensor_msgs/CompressedImage' and ROS 2 type 'sensor_msgs/msg/CompressedImage'
+created 1to2 bridge for topic '/wamv/sensors/cameras/front_left_camera/image_raw/compressedDepth' with ROS 1 type 'sensor_msgs/CompressedImage' and ROS 2 type 'sensor_msgs/msg/CompressedImage'
+...
+```
+
+and the following sample output for ROS 2 to 1:
+```
+Created 2 to 1 bridge for service /gazebo/pause_physics
+Created 2 to 1 bridge for service /gazebo/reset_simulation
+Created 2 to 1 bridge for service /gazebo/reset_world
+Created 2 to 1 bridge for service /gazebo/unpause_physics
+Created 2 to 1 bridge for service /wamv/sensors/cameras/front_left_camera/set_camera_info
+Created 2 to 1 bridge for service /wamv/sensors/cameras/front_right_camera/set_camera_info
+Created 2 to 1 bridge for service /wamv/sensors/cameras/middle_right_camera/set_camera_info
+Created 2 to 1 bridge for service /wamv/sensors/imu_service
+...
+created 2to1 bridge for topic '/rosout' with ROS 2 type 'rcl_interfaces/msg/Log' and ROS 1 type 'rosgraph_msgs/Log'
+created 2to1 bridge for topic '/wamv/thrusters/left_thrust_cmd' with ROS 2 type 'std_msgs/msg/Float32' and ROS 1 type ''
+...
+```
 
 Shell 3, run RViz 2 in ROS 2:
 ```
@@ -278,19 +310,46 @@ The three images and point cloud visualization should show up in RViz 2.
 
 ## Bridge built-in robot commands from ROS 2 to ROS 1
 
-This section shows how to send commands from a ROS 2 node to a robot running in ROS 1.
-This allows us to write new algorithms in ROS 2 and execute the commands to control a ROS 1 robot.
+This section shows how to receive and send data programmatically, using a ROS 2 node to talk to a robot running in ROS 1.
+This allows us to write new algorithms in ROS 2 to control a ROS 1 robot.
 
-Shell 4, run a ROS 2 node to subscribe to built-in data types in ROS 1:
-TODO: Test this
+Continue with Shells 1 and 2 set up in the previous section.
+
+Shell 4, build the ROS 2 `bridge_msgs` package if you haven't done so:
 ```
 . /opt/ros/dashing/setup.bash
-ros2 run bridge_msgs demo_vrx_read.py
+cd ros1_bridge_sandbox/ros2_msgs_ws
+colcon build --packages-select bridge_msgs --symlink-install
+. install/local_setup.bash
 ```
 
-Run a ROS 2 node to publish to built-in data types in ROS 1:
-TODO: Test this
+Keeping the bridge in Shell 2 running, in Shell 4, run a ROS 2 node to subscribe to built-in data types from ROS 1:
 ```
-ros2 run bridge_msgs demo_vrx_write.py
+ros2 run bridge_msgs demo_vrx_read
 ```
+
+Sample output:
+```
+[INFO] [demo_bridge_vrx]: Received IMU data at 23.467000000
+[INFO] [demo_bridge_vrx]: Received joint states at 23.462000000
+[INFO] [demo_bridge_vrx]: Received joint states at 23.463000000
+[INFO] [demo_bridge_vrx]: Received joint states at 23.464000000
+[INFO] [demo_bridge_vrx]: Received joint states at 23.465000000
+```
+
+Ctrl+C to terminate the script.
+
+Still in Shell 4, run a ROS 2 node to publish built-in data types to ROS 1:
+```
+ros2 run bridge_msgs demo_vrx_write
+```
+
+Sample output:
+```
+[INFO] [demo_vrx_write]: Published command 1
+[INFO] [demo_vrx_write]: Published command 1
+[INFO] [demo_vrx_write]: Published command 1
+[INFO] [demo_vrx_write]: Published command 1
+```
+You should see the robot in Gazebo move to the command.
 
