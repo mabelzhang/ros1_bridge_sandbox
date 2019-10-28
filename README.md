@@ -319,7 +319,7 @@ Shell 4, build the ROS 2 `bridge_msgs` package if you haven't done so:
 ```
 . /opt/ros/dashing/setup.bash
 cd ros1_bridge_sandbox/ros2_msgs_ws
-colcon build --packages-select bridge_msgs --symlink-install
+colcon build --packages-select bridge_msgs
 . install/local_setup.bash
 ```
 

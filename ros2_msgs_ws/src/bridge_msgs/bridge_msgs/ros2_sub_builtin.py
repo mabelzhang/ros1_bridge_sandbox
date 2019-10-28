@@ -18,7 +18,7 @@ def main():
 
     node = rclpy.create_node('ros2_sub_builtin')
 
-    fp_sub = node.create_subscription(Float32, 'floating_point', callback)
+    fp_sub = node.create_subscription(Float32, 'floating_point', callback, 10)
     fp_sub
     print('subscribing to floating_point')
 

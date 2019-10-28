@@ -19,7 +19,7 @@ def main():
     node = rclpy.create_node('ros2_sub')
 
     joint_cmd_sub = node.create_subscription(JointCommand, 'joint_command',
-        callback)
+        callback, 10)
     joint_cmd_sub
     print('subscribing to joint_command')
 
