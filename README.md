@@ -1,4 +1,4 @@
-Minimal packages to demonstrate the usage of
+Minimal examples to demonstrate the usage of
 [`ros1_bridge`](https://github.com/ros2/ros1_bridge), a communication channel
 between ROS 1 and ROS 2.
 The bridge allows packages in ROS 1 and ROS 2 to run simultaneously, so that
@@ -25,21 +25,21 @@ This package has been tested in Ubuntu 18.04 with
 A Dockerfile with the prerequisites is provided.
 
 
-# Basic usage: bridge built-in data types
+# Bridge built-in data types
 
-This example demonstrates how to bridge communication between publisher and
-subscriber across ROS 1 and ROS 2, for a built-in message type
-(`std_msgs/Float32`).
+This section demonstrates minimal examples bridging communication between
+publisher and subscriber across ROS 1 and ROS 2, for a built-in message 
+type (`std_msgs/Float32`).
 
 For built-in types, one has simply to run a publisher, a subscriber, and the
-bridge.
+bridge out of the box.
 
 Shell 1, run a ROS 1 publisher of a built-in message type:
 
 ```
 . /opt/ros/melodic/setup.bash
 roscore &
-python ros1_bridge_sandbox/ros1_msgs_ws/src/bridge_msgs/src/bridge_msgs/ros1_pub_iltin.py
+python ros1_bridge_sandbox/ros1_msgs_ws/src/bridge_msgs/src/bridge_msgs/ros1_pub_builtin.py
 ```
 
 Shell 2, run a ROS 2 subscriber to the same message:
@@ -47,6 +47,10 @@ Shell 2, run a ROS 2 subscriber to the same message:
 . /opt/ros/dashing/setup.bash
 python3 ros1_bridge_sandbox/ros2_msgs_ws/src/bridge_msgs/src/ros2_sub_builtin.py
 ```
+
+(The `python3` command is used because we have not compiled the `bridge_msgs`
+package in ROS 2 yet.
+After compiling, we can simply use `ros2 run bridge_msgs ros2_pub`.)
 
 Note that simply echoing the message without an existing subscriber would not
 work.
@@ -78,10 +82,21 @@ received floating_point 0.091966
 received floating_point 0.147991
 ```
 
+Similarly, bridging in the other direction is provided in examples 
+`ros1_sub_builtin.py` and `ros2_pub_builtin.py`.
 
-# Bridge a custom data type
 
-This example demonstrates how to bridge communication between publisher and subscriber across ROS 1 and ROS 2, for a custom message type.
+# Bridge a custom data type (with matching fields)
+
+This minimal example demonstrates how to bridge communications between publisher 
+and subscriber across ROS 1 and ROS 2, for a custom message type.
+
+We created a custom message type, deliberately identical in ROS 1 and ROS 2, in 
+order to satisfy the conditions for automatic association specified in the `ros1_bridge`
+[documentation](https://github.com/ros2/ros1_bridge/blob/master/doc/index.rst).
+
+For custom types with non-matching fields, see dedicated section below about
+setting up a YAML mapping file.
 
 ## Set up shells and compile packages
 
@@ -153,7 +168,7 @@ of the bridge.
 Shell 2, publish in ROS 2 to ROS 1.
 This publishes `bridge_msgs/JointCommand` type to `/joint_command` topic:
 ```
-$ python3 src/bridge_msgs/src/ros2_pub.py
+$ ros2 run bridge_msgs ros2_pub
 Published joint_command
 Published joint_command
 Published joint_command
@@ -190,7 +205,7 @@ published joint_command 0.100489
 
 Shell 2:
 ```
-$ python3 src/bridge_msgs/src/ros2_sub.py
+$ ros2 run bridge_msgs ros2_sub
 received joint_command 0.337332
 received joint_command 0.004804
 received joint_command 0.022121
@@ -198,7 +213,7 @@ received joint_command 0.100489
 ```
 
 
-# Bridge a ROS 1 robot simulation to ROS 2
+# Demonstration on a simulated robot: Bridge built-in data types to use a ROS 1 robot in ROS 2
 
 This example demonstrates communication for a more complex system, a simulated
 robot in ROS 1, which will be bridged to talk to RViz2 and code in ROS 2.
@@ -353,3 +368,82 @@ Sample output:
 ```
 You should see the robot in Gazebo move to the command.
 
+
+# Bridge a custom data type (with non-matching fields)
+
+For custom types with non-matching fields, i.e. do not satisfy the automatic 
+association conditions on the `ros1_bridge`
+[documentation](https://github.com/ros2/ros1_bridge/blob/master/doc/index.rst)
+page, a YAML file specifying the desired mapping need to be manually created.
+This section describes an example of bridging such a message type, namely,
+the built-in logging message topic `/rosout`.
+
+The logging message is type [`rosgraph_msgs/Log`](https://github.com/ros/ros_comm_msgs/blob/kinetic-devel/rosgraph_msgs/msg/Log.msg)
+in ROS 1, and 
+[`rcl_interfaces/Log`](https://github.com/ros2/rcl_interfaces/blob/master/rcl_interfaces/msg/Log.msg) 
+in ROS 2.
+These two message have non-matching fields and are not automatically associated
+for the bridge.
+To define a mapping between these two message types for the bridge to recognize,
+a YAML file is defined in 
+[`rcl_interfaces/mapping_rules.yaml`](https://github.com/ros2/rcl_interfaces/blob/master/rcl_interfaces/mapping_rules.yaml).
+
+After recompiling the package with the YAML file, and recompiling the bridge,
+an association will be established.
+
+## Run the example: bridge `/rosout` from ROS 1 to ROS 2
+
+The following example shows `/rosout` is successfully bridged.
+This is a built-in example already in ROS 2.
+A similar setup can be used to bridge your custom non-matching data types.
+
+Here we assume you have built `bridge_msgs` packages in ROS 1 and ROS 2 
+workspaces from above.
+
+We will run a publisher and subscriber, just so that we have something
+logging in `/rosout` to be bridged.
+
+Shell 1, run the bridge:
+```
+. /opt/ros/melodic/setup.bash
+. /opt/ros/dashing/setup.bash
+ros2 run ros1_bridge dynamic_bridge
+```
+Here, the bridge simply from Debian install would work, because `/rosout` mapping
+has already been done for you.
+If you are bridging your own custom types, you will need to recompile the bridge 
+as shown in the previous sections.
+
+Shell 2, subscribe to ROS 2 messages in ROS 1:
+```
+cd ros1_bridge_sandbox/ros1_msgs_ws
+. devel_isolated/setup.bash
+rosrun bridge_msgs ros1_sub.py
+```
+This node logs to `/rosout`.
+
+Shell 3, publish messages in ROS 2:
+```
+. /opt/ros/dashing/setup.bash
+cd ros1_bridge_sandbox/ros2_msgs_ws
+. install/local_setup.bash
+ros2 run bridge_msgs ros2_pub
+```
+
+Shell 4, inspect `/rosout` in ROS 2, and verify that it is echoing 
+messages logged in ROS 1:
+```
+ros2 topic echo /rosout
+```
+
+Sample output:
+```
+name: /ros1_sub_877_1572260059155
+msg: Received joint_command 0.0177234901797
+file: ros1_sub.py
+function: callback
+line: 12
+```
+
+We can see that the message logged by the ROS 1 node is indeed bridged 
+to `/rosout` in ROS 2.
